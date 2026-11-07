@@ -1,37 +1,58 @@
 from typing import Literal
-
+from math import prod
 from langchain_core.tools import tool
 
 
 @tool
 def calculator(
-    a: float,
-    b: float,
-    operation: Literal["add", "subtract", "multiply", "divide"],
+    numbers: list[float],
+    operation: Literal[
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "average",
+        "min",
+        "max",
+    ],
 ) -> str:
     """
-    Perform basic mathematical calculations.
+    Perform mathematical calculations on multiple numbers.
 
     Args:
-        a: First number.
-        b: Second number.
+        numbers: List of numbers for calculation.
         operation: Mathematical operation to perform.
     """
 
+    if not numbers:
+        return "Error: At least one number is required."
+
     if operation == "add":
-        result = a + b
+        result = sum(numbers)
 
     elif operation == "subtract":
-        result = a - b
+        result = numbers[0] - sum(numbers[1:])
 
     elif operation == "multiply":
-        result = a * b
+        result = prod(numbers)
 
     elif operation == "divide":
-        if b == 0:
-            return "Error: Division by zero is not allowed."
+        result = numbers[0]
 
-        result = a / b
+        for number in numbers[1:]:
+            if number == 0:
+                return "Error: Division by zero is not allowed."
+
+            result /= number
+
+    elif operation == "average":
+        result = sum(numbers) / len(numbers)
+
+    elif operation == "min":
+        result = min(numbers)
+
+    elif operation == "max":
+        result = max(numbers)
 
     else:
         return "Error: Unsupported operation."
